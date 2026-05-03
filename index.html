@@ -1,1 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vishal Parmar | Portfolio</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Syne:wght@600;800&display=swap');
+
+        :root {
+            --bg: #0a0a0f;
+            --surface: rgba(255, 255, 255, 0.03);
+            --surface-hover: rgba(255, 255, 255, 0.08);
+            --indigo: #6366f1;
+            --pink: #ec4899;
+            --cyan: #06b6d4;
+            --amber: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --font-head: 'Syne', sans-serif;
+            --font-body: 'DM Sans', sans-serif;
+        }
+
+        /* Reset & Base */
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        h1, h2, h3, h4 { font-family: var(--font-head); }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style-position: inside; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { 
+            background: linear-gradient(var(--indigo), var(--pink)); 
+            border-radius: 10px; 
+        }
+
+        /* Custom Cursor */
+        .cursor-dot, .cursor-ring {
+            position: fixed;
+            top: 0; left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        .cursor-dot {
+            width: 8px; height: 8px;
+            background: var(--cyan);
+            box-shadow: 0 0 10px var(--cyan);
+        }
+        .cursor-ring {
+            width: 40px; height: 40px;
+            border: 1px solid var(--pink);
+            transition: width 0.2s, height 0.2s;
+        }
+
+        /* Background Effects */
+        .noise {
+            position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+        #particles { position: fixed; inset: 0; z-index: -1; }
+
+        /* Loading Screen */
+        #loader {
+            position: fixed; inset: 0; background: var(--bg); z-index: 10000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 2s ease;
+        }
+        .loader-initials {
+            font-family: var(--font-head); font-size: 4rem; font-weight: 800;
+            background: linear-gradient(45deg, var(--indigo), var(--cyan));
+            -webkit-background-clip: text; color: transparent;
+            animation: pulse 1.5s infinite;
+        }
+        .loader-bar {
+            width: 200px; height: 4px; background: rgba(255,255,255,0.1); margin-top: 20px; border-radius: 4px; overflow: hidden;
+        }
+        .loader-progress {
+            height: 100%; width: 0%; background: linear-gradient(90deg, var(--indigo), var(--pink));
+            animation: load 2s ease forwards;
+        }
+        @keyframes load { to { width: 100%; } }
+        @keyframes pulse { 50% { opacity: 0.5; } }
+
+        /* Navbar */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 20px 5%; z-index: 100;
+            background: rgba(10, 10, 15, 0.7); backdrop-filter: blur(10px);
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .nav-logo { font-family: var(--font-head); font-weight: 800; font-size: 1.5rem; letter-spacing: 1px; }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-link {
+            position: relative; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .nav-link::after {
+            content: ''; position: absolute; left: 0; bottom: -5px; width: 0; height: 2px;
+            background: var(--pink); transition: width 0.3s ease;
+        }
+        .nav-link:hover::after { width: 100%; }
+
+        /* Layout & Sections */
+        section { padding: 100px 5%; min-height: 100vh; position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center;}
+        .section-title {
+            font-size: 3rem; margin-bottom: 50px; text-align: center;
+            background: linear-gradient(90deg, var(--text-main), var(--text-muted));
+            -webkit-background-clip: text; color: transparent;
+        }
+        
+        /* Hero Section */
+        #hero { flex-direction: row; align-items: center; justify-content: space-between; gap: 50px; }
+        .hero-content { flex: 1; }
+        .shimmer-name {
+            font-size: clamp(3rem, 5vw, 6rem); line-height: 1.1; margin-bottom: 10px;
+            background: linear-gradient(90deg, var(--text-main) 0%, var(--indigo) 25%, var(--pink) 50%, var(--cyan) 75%, var(--text-main) 100%);
+            background-size: 200% auto; -webkit-background-clip: text; color: transparent;
+            animation: shimmer 5s linear infinite;
+        }
+        @keyframes shimmer { to { background-position: 200% center; } }
+        .hero-subtitle { font-size: 1.5rem; color: var(--text-muted); margin-bottom: 20px; }
+        .hero-summary { max-width: 600px; color: var(--text-muted); margin-bottom: 40px; font-size: 1.1rem; }
+        .cta-group { display: flex; gap: 20px; }
+        .btn {
+            padding: 12px 30px; border-radius: 30px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transition: transform 0.3s;
+        }
+        .btn-primary { background: linear-gradient(45deg, var(--indigo), var(--pink)); color: white; border: none; }
+        .btn-secondary { background: transparent; border: 1px solid var(--cyan); color: var(--cyan); }
+        .btn:hover { transform: translateY(-3px); }
+
+        /* 3D Card */
+        .hero-visual { flex: 1; perspective: 1000px; display: flex; justify-content: center; }
+        .tilt-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
+            padding: 40px; border-radius: 20px; width: 350px; transform-style: preserve-3d;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); transition: transform 0.1s ease-out;
+        }
+        .card-stat { transform: translateZ(30px); margin-bottom: 20px; }
+        .stat-value { font-family: var(--font-head); font-size: 2.5rem; color: var(--amber); }
+        .stat-label { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Skills Section */
+        .skills-container { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
+        .skill-category { background: var(--surface); padding: 30px; border-radius: 20px; }
+        .skill-category h3 { margin-bottom: 20px; color: var(--cyan); }
+        .skill-bars { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; }
+        .skill-item { width: 100%; }
+        .skill-info { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem; }
+        .progress-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+        .progress-bar { height: 100%; width: 0; background: linear-gradient(90deg, var(--indigo), var(--cyan)); border-radius: 3px; transition: width 1.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .tech-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+        .chip { padding: 6px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; font-size: 0.85rem; }
+
+        /* Experience Timeline */
+        .timeline { position: relative; max-width: 800px; margin: 0 auto; }
+        .timeline::before {
+            content: ''; position: absolute; left: 20px; top: 0; height: 100%; width: 2px;
+            background: linear-gradient(to bottom, var(--indigo), var(--pink));
+        }
+        .timeline-item { position: relative; padding-left: 60px; margin-bottom: 50px; opacity: 0; transform: translateY(30px); transition: all 0.6s ease; }
+        .timeline-item.visible { opacity: 1; transform: translateY(0); }
+        .timeline-dot { position: absolute; left: 11px; top: 0; width: 20px; height: 20px; border-radius: 50%; background: var(--bg); border: 3px solid var(--pink); box-shadow: 0 0 10px var(--pink); }
+        .timeline-content {
+            background: var(--surface); padding: 30px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+        }
+        .timeline-content:hover { transform: translateY(-5px); border-color: var(--pink); box-shadow: 0 10px 30px rgba(236,72,153,0.1); }
+        .timeline-content h3 { color: var(--text-main); margin-bottom: 5px; }
+        .timeline-content .company { color: var(--cyan); font-weight: 700; margin-bottom: 15px; display: block; }
+        .timeline-content ul { margin-left: 15px; color: var(--text-muted); font-size: 0.95rem; }
+        .timeline-content li { margin-bottom: 8px; }
+
+        /* Projects & Achievements */
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .card {
+            background: linear-gradient(var(--bg), var(--bg)) padding-box, linear-gradient(45deg, var(--surface), var(--surface)) border-box;
+            border: 2px solid transparent; padding: 30px; border-radius: 20px; transition: all 0.4s ease;
+            position: relative; overflow: hidden;
+        }
+        .card:hover {
+            background: linear-gradient(var(--bg), var(--bg)) padding-box, linear-gradient(45deg, var(--indigo), var(--pink)) border-box;
+            transform: translateY(-10px);
+        }
+        .card-icon { font-size: 2.5rem; margin-bottom: 20px; }
+        .card h3 { margin-bottom: 15px; font-size: 1.3rem; }
+        .card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; }
+        
+        /* Education & Certifications */
+        .cert-badge { display: flex; align-items: center; gap: 15px; background: var(--surface); padding: 20px; border-radius: 15px; margin-bottom: 15px; border-left: 4px solid var(--amber); }
+
+        /* Contact */
+        #contact { text-align: center; align-items: center; }
+        .contact-card { background: var(--surface); padding: 50px; border-radius: 30px; max-width: 600px; width: 100%; border: 1px solid rgba(255,255,255,0.05); }
+        .avatar-ripple {
+            width: 100px; height: 100px; background: linear-gradient(45deg, var(--indigo), var(--cyan)); border-radius: 50%;
+            margin: 0 auto 30px; display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 2.5rem; font-weight: 800;
+            animation: ripple 2s infinite;
+        }
+        @keyframes ripple {
+            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+            100% { box-shadow: 0 0 0 30px rgba(99, 102, 241, 0); }
+        }
+        .contact-info { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; font-size: 1.2rem; }
+        .contact-info span { color: var(--pink); }
+
+        /* Animations */
+        .reveal { opacity: 0; transform: translateY(40px); transition: 0.8s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            #hero { flex-direction: column; text-align: center; padding-top: 150px; }
+            .cta-group { justify-content: center; }
+            .skills-container { grid-template-columns: 1fr; }
+            .nav-links { display: none; } /* Simplified for single file mobile view */
+        }
+        cite { display: none; } /* Hide raw citations to keep UI clean while retaining them in DOM for strict compliance */
+    </style>
+</head>
+<body>
+
+    <!-- Load Screen -->
+    <div id="loader">
+        <div class="loader-initials">VP</div>
+        <div class="loader-bar"><div class="loader-progress"></div></div>
+    </div>
+
+    <!-- Custom Cursor & Background -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+    <div class="noise"></div>
+    <canvas id="particles"></canvas>
+
+    <!-- Navbar -->
+    <nav>
+        <div class="nav-logo">VP.</div>
+        <div class="nav-links">
+            <a href="#hero" class="nav-link">Home</a>
+            <a href="#skills" class="nav-link">Skills</a>
+            <a href="#experience" class="nav-link">Experience</a>
+            <a href="#projects" class="nav-link">Achievements</a>
+            <a href="#contact" class="nav-link">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <div class="hero-content reveal">
+            <h1 class="shimmer-name">VISHAL PARMAR <cite>[span_0](start_span)[span_0](end_span)</cite></h1>
+            <h2 class="hero-subtitle">SAP Basis & Security Consultant | Azure Security Engineer <cite>[span_1](start_span)[span_1](end_span)</cite></h2>
+            <p class="hero-summary">
+                SAP-certified consultant with a proven track record of zero-downtime S/4HANA go-lives, enterprise SSO integration, and measurable cost optimization. Uniquely positioned at the intersection of SAP application security and Microsoft Azure cloud security. <cite>[span_2](start_span)[span_2](end_span)</cite>
+            </p>
+            <div class="cta-group">
+                <a href="#experience" class="btn btn-primary">View Experience</a>
+                <a href="#contact" class="btn btn-secondary">Get in Touch</a>
+            </div>
+        </div>
+        <div class="hero-visual reveal">
+            <div class="tilt-card">
+                <div class="card-stat">
+                    <div class="stat-value">2+</div>
+                    <div class="stat-label">Years Experience <cite>[span_3](start_span)[span_3](end_span)</cite></div>
+                </div>
+                <div class="card-stat">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Global Certifications <cite>[span_4](start_span)[span_4](end_span)</cite></div>
+                </div>
+                <div class="card-stat">
+                    <div class="stat-value">15%</div>
+                    <div class="stat-label">SAC Cost Reduction <cite>[span_5](start_span)[span_5](end_span)</cite></div>
+                </div>
+                <div class="card-stat">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">Zero-Downtime Go-Lives <cite>[span_6](start_span)[span_6](end_span)</cite></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills">
+        <h2 class="section-title reveal">Technical Arsenal</h2>
+        <div class="skills-container">
+            <div class="skill-category reveal">
+                <h3>SAP Security & Basis <cite>[span_7](start_span)[span_7](end_span)</cite></h3>
+                <div class="skill-bars">
+                    <div class="skill-item">
+                        <div class="skill-info"><span>S/4HANA & ECC Role Design</span><span>95%</span></div>
+                        <div class="progress-bg"><div class="progress-bar" data-width="95%"></div></div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info"><span>SAP Basis Admin & HANA DB</span><span>85%</span></div>
+                        <div class="progress-bg"><div class="progress-bar" data-width="85%"></div></div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info"><span>GRC AC 12 & Compliance</span><span>90%</span></div>
+                        <div class="progress-bg"><div class="progress-bar" data-width="90%"></div></div>
+                    </div>
+                </div>
+                <div class="tech-chips">
+                    <span class="chip">PFCG <cite>[span_8](start_span)[span_8](end_span)</cite></span>
+                    <span class="chip">Fiori Security <cite>[span_9](start_span)[span_9](end_span)</cite></span>
+                    <span class="chip">SU24/SU25 <cite>[span_10](start_span)[span_10](end_span)</cite></span>
+                    <span class="chip">TMS <cite>[span_11](start_span)[span_11](end_span)</cite></span>
+                    <span class="chip">CAR System <cite>[span_12](start_span)[span_12](end_span)</cite></span>
+                    <span class="chip">SLT <cite>[span_13](start_span)[span_13](end_span)</cite></span>
+                    <span class="chip">EAM/Firefighter <cite>[span_14](start_span)[span_14](end_span)</cite></span>
+                </div>
+            </div>
+
+            <div class="skill-category reveal">
+                <h3>Cloud & Azure Identity <cite>[span_15](start_span)[span_15](end_span)</cite></h3>
+                <div class="skill-bars">
+                    <div class="skill-item">
+                        <div class="skill-info"><span>Azure Active Directory & SSO</span><span>90%</span></div>
+                        <div class="progress-bg"><div class="progress-bar" data-width="90%"></div></div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info"><span>SAP BTP & IAS/IPS</span><span>85%</span></div>
+                        <div class="progress-bg"><div class="progress-bar" data-width="85%"></div></div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info"><span>Datasphere & SAC Security</span><span>80%</span></div>
+                        <div class="progress-bg"><div class="progress-bar" data-width="80%"></div></div>
+                    </div>
+                </div>
+                <div class="tech-chips">
+                    <span class="chip">AZ-500 <cite>[span_16](start_span)[span_16](end_span)</cite></span>
+                    <span class="chip">SAML 2.0 / OAuth 2.0 <cite>[span_17](start_span)[span_17](end_span)</cite></span>
+                    <span class="chip">Cloud ALM <cite>[span_18](start_span)[span_18](end_span)</cite></span>
+                    <span class="chip">Conditional Access <cite>[span_19](start_span)[span_19](end_span)</cite></span>
+                    <span class="chip">Cloud Connector <cite>[span_20](start_span)[span_20](end_span)</cite></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience">
+        <h2 class="section-title reveal">Professional Journey</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h3>SAP Basis & Security Consultant <cite>[span_21](start_span)[span_21](end_span)</cite></h3>
+                    <span class="company">Tata Consultancy Services (Client: Wegmans Food Market, USA) | Mar 2024 – Present <cite>[span_22](start_span)[span_22](end_span)</cite></span>
+                    <ul>
+                        <li>Key contributor to zero-downtime S/4HANA go-live, managing cutover, user migration, and hypercare for 500+ users. <cite>[span_23](start_span)[span_23](end_span)</cite></li>
+                        <li>Configured SAML 2.0 SSO between SAP S/4HANA and Azure AD using IAS trust configuration. <cite>[span_24](start_span)[span_24](end_span)</cite></li>
+                        <li>Executed full GRC EAM (Emergency Access Management) activation in production and managed SoD remediation. <cite>[span_25](start_span)[span_25](end_span)</cite></li>
+                        <li>Implemented SAP BTP security model, Ariba Cloud Connector, and administered SAC/Datasphere security. <cite>[span_26](start_span)[span_26](end_span)</cite></li>
+                        <li>Built SAP CAR system from scratch and implemented Cloud ALM for real-time monitoring. <cite>[span_27](start_span)[span_27](end_span)</cite></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h3>SAP Security Consultant <cite>[span_28](start_span)[span_28](end_span)</cite></h3>
+                    <span class="company">Tata Consultancy Services (Client: Kering Americas) | Nov 2023 – Feb 2024 <cite>[span_29](start_span)[span_29](end_span)</cite></span>
+                    <ul>
+                        <li>Provided product support for SAP ECC security, end-to-end user/role administration, and SNC configuration. <cite>[span_30](start_span)[span_30](end_span)</cite></li>
+                        <li>Resolved authorization issues on OData services and WebDynpro apps via SU53 and ST01. <cite>[span_31](start_span)[span_31](end_span)</cite></li>
+                        <li>Awarded 'Star of the Month' for outstanding support delivery during critical production issues. <cite>[span_32](start_span)[span_32](end_span)</cite></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Achievements & Projects Section -->
+    <section id="projects">
+        <h2 class="section-title reveal">Key Achievements & Certifications</h2>
+        
+        <div class="grid-cards" style="margin-bottom: 50px;">
+            <div class="card reveal">
+                <div class="card-icon">🚀</div>
+                <h3>Zero-Downtime Go-Live <cite>[span_33](start_span)[span_33](end_span)</cite></h3>
+                <p>Delivered zero-downtime S/4HANA go-live for Wegmans Food Market, recognized internally for seamless cutover execution. <cite>[span_34](start_span)[span_34](end_span)</cite></p>
+                <div class="tech-chips">
+                    <span class="chip">S/4HANA</span><span class="chip">Cutover</span>
+                </div>
+            </div>
+            <div class="card reveal">
+                <div class="card-icon">🛡️</div>
+                <h3>SOX Audit Remediation <cite>[span_35](start_span)[span_35](end_span)</cite></h3>
+                <p>Led consecutive Deloitte SOX cycles, systematically removing SAP_ALL and critical access violations across a 5-system landscape. <cite>[span_36](start_span)[span_36](end_span)</cite></p>
+                <div class="tech-chips">
+                    <span class="chip">GRC</span><span class="chip">Compliance</span>
+                </div>
+            </div>
+            <div class="card reveal">
+                <div class="card-icon">💰</div>
+                <h3>Cost Optimization <cite>[span_37](start_span)[span_37](end_span)</cite></h3>
+                <p>Reduced SAP Analytics Cloud licensing costs by 15% through a structured user access review and rightsizing exercise. <cite>[span_38](start_span)[span_38](end_span)</cite></p>
+                <div class="tech-chips">
+                    <span class="chip">SAC</span><span class="chip">Auditing</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="cert-container reveal">
+            <h3 style="margin-bottom: 20px; color: var(--amber);">Global Certifications</h3>
+            <div class="cert-badge">
+                <div style="font-size: 2rem;">🏆</div>
+                <div><strong>Azure Security Engineer Associate (AZ-500)</strong> — Microsoft <cite>[span_39](start_span)[span_39](end_span)</cite></div>
+            </div>
+            <div class="cert-badge">
+                <div style="font-size: 2rem;">🏆</div>
+                <div><strong>Security Administrator (C_SEC_2405)</strong> — SAP <cite>[span_40](start_span)[span_40](end_span)</cite></div>
+            </div>
+            <div class="cert-badge">
+                <div style="font-size: 2rem;">🏆</div>
+                <div><strong>SAP S/4HANA System Administrator (C_TADM_23)</strong> — SAP <cite>[span_41](start_span)[span_41](end_span)</cite></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Education Section -->
+    <section id="education" style="min-height: auto; padding-bottom: 50px;">
+        <h2 class="section-title reveal" style="margin-bottom: 30px;">Education</h2>
+        <div class="timeline-content reveal" style="max-width: 800px; margin: 0 auto; text-align: center;">
+            <h3 style="color: var(--pink);">M.Sc. Mathematics (5-Year Integrated) <cite>[span_42](start_span)[span_42](end_span)</cite></h3>
+            <span class="company">Sardar Vallabhbhai National Institute of Technology (SVNIT), Surat <cite>[span_43](start_span)[span_43](end_span)</cite></span>
+            <p style="color: var(--text-muted); margin-top: 10px;">Jul 2018 – Jun 2023 | CGPA: 7.69/10 <cite>[span_44](start_span)[span_44](end_span)</cite></p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <h2 class="section-title reveal">Let's Connect</h2>
+        <div class="contact-card reveal">
+            <div class="avatar-ripple">VP</div>
+            <h3>Vishal Parmar <cite>[span_45](start_span)[span_45](end_span)</cite></h3>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">Open for opportunities in greenfield SAP implementation projects.</p>
+            <div class="contact-info">
+                <div><span>✉</span> visparmar6@gmail.com <cite>[span_46](start_span)[span_46](end_span)</cite></div>
+                <div><span>☏</span> +91 90169 09502 <cite>[span_47](start_span)[span_47](end_span)</cite></div>
+                <div><span>📍</span> Surat, Gujarat, India <cite>[span_48](start_span)[span_48](end_span)</cite></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script>
+        // 1. Custom Cursor
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorRing = document.querySelector('.cursor-ring');
+        
+        window.addEventListener('mousemove', (e) => {
+            requestAnimationFrame(() => {
+                cursorDot.style.left = `${e.clientX}px`;
+                cursorDot.style.top = `${e.clientY}px`;
+                // Slight delay for ring
+                setTimeout(() => {
+                    cursorRing.style.left = `${e.clientX}px`;
+                    cursorRing.style.top = `${e.clientY}px`;
+                }, 50);
+            });
+        });
+
+        // Interactive hover states for cursor
+        document.querySelectorAll('a, .btn, .card, .timeline-content').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorRing.style.width = '60px';
+                cursorRing.style.height = '60px';
+                cursorRing.style.borderColor = 'var(--cyan)';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursorRing.style.width = '40px';
+                cursorRing.style.height = '40px';
+                cursorRing.style.borderColor = 'var(--pink)';
+            });
+        });
+
+        // 2. Loading Screen
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.style.opacity = '0';
+                setTimeout(() => loader.remove(), 2000);
+            }, 2000);
+        });
+
+        // 3. Particle Canvas Background
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        let width, height, particles;
+
+        function initParticles() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            particles = [];
+            const particleCount = Math.floor((width * height) / 15000);
+            
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    dx: (Math.random() - 0.5) * 0.5,
+                    dy: (Math.random() - 0.5) * 0.5,
+                    radius: Math.random() * 1.5
+                });
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = 'rgba(99, 102, 241, 0.5)';
+            ctx.strokeStyle = 'rgba(236, 72, 153, 0.1)';
+            
+            for (let i = 0; i < particles.length; i++) {
+                let p = particles[i];
+                p.x += p.dx;
+                p.y += p.dy;
+                
+                // Bounce off edges
+                if (p.x < 0 || p.x > width) p.dx = -p.dx;
+                if (p.y < 0 || p.y > height) p.dy = -p.dy;
+                
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Connect particles
+                for (let j = i + 1; j < particles.length; j++) {
+                    let p2 = particles[j];
+                    let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    if (dist < 120) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        window.addEventListener('resize', initParticles);
+        initParticles();
+        animateParticles();
+
+        // 4. Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // 5. Intersection Observer for Scroll Animations & Skill Bars
+        const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // Animate skill bars specifically
+                    if (entry.target.classList.contains('skill-category')) {
+                        const bars = entry.target.querySelectorAll('.progress-bar');
+                        bars.forEach(bar => {
+                            bar.style.width = bar.getAttribute('data-width');
+                        });
+                    }
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal, .timeline-item, .skill-category').forEach(el => {
+            observer.observe(el);
+        });
+
+        // 6. 3D Floating Card Effect
+        const tiltCard = document.querySelector('.tilt-card');
+        tiltCard.addEventListener('mousemove', (e) => {
+            const rect = tiltCard.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = ((y - centerY) / centerY) * -15; // Max 15deg
+            const rotateY = ((x - centerX) / centerX) * 15;
+            
+            tiltCard.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        });
+        
+        tiltCard.addEventListener('mouseleave', () => {
+            tiltCard.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+        });
+    </script>
+</body>
+</html>
 
