@@ -315,11 +315,36 @@
         }
 
         /* Responsive */
+                /* Responsive Fixes */
         @media (max-width: 768px) {
             .hero-name { font-size: 2.2rem; }
             .timeline-item { padding-left: 0; }
             .timeline::before, .timeline-dot { display: none; }
             section { padding: 60px 0; }
+            
+            /* 1. Stack stat badges neatly */
+            .hero-stats {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .stat-badge {
+                justify-content: center;
+            }
+
+            /* 2. Fix contact info wrapping */
+            .contact-links {
+                flex-direction: column;
+                gap: 0.8rem;
+                align-items: flex-start;
+            }
+            .contact-links span:not([class]) { 
+                display: none; /* Hides the '|' separators on mobile */
+            }
+
+            /* 3. Fix bottom nav overlap */
+            body {
+                padding-bottom: 100px; /* Gives space so you can scroll past the nav */
+            }
         }
     </style>
 </head>
